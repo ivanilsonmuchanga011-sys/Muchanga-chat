@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muchanga Chat - Web App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SDKs do Firebase (Versão Gratuita em Tempo Real) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        :root {
+            --bg-main: #0b141a;
+            --bg-sidebar: #111b21;
+            --bg-header: #202c33;
+            --bg-msg-out: #005c4b;
+            --bg-msg-in: #202c33;
+            --bg-input: #2a3942;
+            --accent: #00a884;
+            --text-primary: #e9edef;
+            --text-muted: #8696a0;
+            --border-color: #222d34;
+        }
+
+        body { background-color: var(--bg-main); color: var(--text-primary); height: 100vh; overflow: hidden; display: flex; }
+
+        /* ======================================================
+           1. ECRÃS DE BOAS-VINDAS E CADASTRO (MODAL OVERLAY)
+           ====================================================== */
+        .overlay-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(11, 20, 26, 0.95);
+            backdrop-filter: blur(8px);
+            z-index: 9999; display: flex; justify-content: center; align-items: center;
+            padding: 20px;
+        }
+
+        .card-box {
+            background: #1f2c34;
+            border: 1px solid var(--border-color);
+            padding: 35px 30px;
+            border-radius: 16px;
+            width: 100%; max-width: 440px;
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .card-box i.logo-icon {
+            font-size: 50px; color: var(--accent); margin-bottom: 15px;
+        }
+
+        .card-box h2 {
+            font-size: 24px; color: var(--accent); margin-bottom: 15px; font-weight: 700;
+        }
+
+        .card-box p.welcome-text {
+            color: var(--text-primary); font-size: 14px; line-height: 1.6; margin-bottom: 25px;
+            background: #111b21; padding: 15px; border-radius: 10px; border-left: 4px solid var(--accent);
+            text-align: left;
+        }
+
+        .card-box input {
+            width: 100%; padding: 14px; margin-bottom: 15px;
+            border-radius: 8px; border: 1px solid var(--border-color);
+            background: var(--bg-input); color: white; outline: none; font-size: 15px;
+        }
+
+        .card-box button {
+            width: 100%; padding: 14px; background: var(--accent);
+            border: none; border-radius: 8px; color: white;
+            font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.2s;
+        }
+
+        .card-box button:hover { background: #008f6f; transform: translateY(-1px); }
+
+        /* ======================================================
+           2. INTERFACE PRINCIPAL (WHATSAPP STYLE)
+           ====================================================== */
+        .app-container { width: 100vw; height: 100vh; display: flex; }
+
+        /* BARRA LATERAL */
+        .sidebar {
+            width: 30%; min-width: 320px;
+            border-right: 1px solid var(--border-color);
+            display: flex; flex-direction: column; background: var(--bg-sidebar);
+        }
+
+        .header {
+            height: 60px; background: var(--bg-header);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
+        }
+
+        .user-profile { display: flex; align-items: center; gap: 10px; font-weight: bold; }
+        .avatar-circle {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: var(--accent); display: flex; align-items: center;
+            justify-content: center; color: white; font-weight: bold;
+        }
+
+        .chat-list { flex: 1; overflow-y: auto; }
+        .chat-item {
+            display: flex; align-items: center; padding: 12px 16px;
+            cursor: pointer; border-bottom: 1px solid var(--border-color); transition: 0.2s;
+        }
+        .chat-item:hover, .chat-item.active { background-color: #2a3942; }
+        .chat-item .chat-info { margin-left: 12px; flex: 1; }
+        .chat-item .chat-name { font-size: 15px; font-weight: 600; }
+        .chat-item .chat-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+        /* ÁREA DE CONVERSA */
+        .chat-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-main); }
+        
+        .messages-container {
+            flex: 1; padding: 20px 8%; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 10px;
+            background-image: radial-gradient(#222d34 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .msg {
+            max-width: 65%; padding: 8px 12px; border-radius: 8px;
+            font-size: 14px; position: relative; word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        }
+        .msg.out { background: var(--bg-msg-out); align-self: flex-end; border-top-right-radius: 0; }
+        .msg.in { background: var(--bg-msg-in); align-self: flex-start; border-top-left-radius: 0; }
+        
+        .msg-sender { font-size: 11px; font-weight: bold; color: #34b7f1; margin-bottom: 3px; }
+        .msg-time { font-size: 10px; color: rgba(255,255,255,0.6); float: right; margin-left: 12px; margin-top: 4px; }
+
+        /* BARRA DE DIGITAÇÃO */
+        .input-bar {
+            height: 62px; background: var(--bg-header);
+            display: flex; align-items: center; padding: 5px 16px; gap: 12px;
+        }
+        .input-bar input {
+            flex: 1; height: 42px; background: var(--bg-input);
+            border: none; outline: none; border-radius: 8px;
+            padding: 0 16px; color: white; font-size: 15px;
+        }
+        .send-btn {
+            background: var(--accent); border: none; color: white;
+            width: 42px; height: 42px; border-radius: 50%;
+            cursor: pointer; font-size: 16px; display: flex;
+            align-items: center; justify-content: center;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <!-- ECRÃ 1: BOAS-VINDAS -->
+    <div class="overlay-screen" id="welcomeOverlay">
+        <div class="card-box">
+            <i class="fa-solid fa-comments logo-icon"></i>
+            <h2>Muchanga Chat</h2>
+            <p class="welcome-text">
+                Seja bem-vindo ao <strong>Muchanga Chat</strong>! 👋<br><br>
+                Este é um programa de experimento e aprimoramento de habilidades do dev <strong>Ivanilson Muchanga</strong>, estudante de Engenharia Informática.<br><br>
+                É somente um exercício de prática, espero que se divirta!
+            </p>
+            <button onclick="irParaCadastro()">COMENÇAR</button>
+        </div>
+    </div>
+
+    <!-- ECRÃ 2: CADASTRO DO NOME -->
+    <div class="overlay-screen" id="registerOverlay" style="display: none;">
+        <div class="card-box">
+            <i class="fa-solid fa-user-astronaut logo-icon"></i>
+            <h2>Criar o teu Perfil</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+                Como gostarias de ser chamado no chat?
+            </p>
+            <input type="text" id="usernameInput" placeholder="Digita o teu nome ou apelido...">
+            <button onclick="iniciarSessao()">ENTRAR NO CHAT</button>
+        </div>
+    </div>
+
+    <!-- INTERFACE PRINCIPAL -->
+    <div class="app-container">
+        <!-- BARRA LATERAL -->
+        <div class="sidebar">
+            <div class="header">
+                <div class="user-profile">
+                    <div class="avatar-circle" id="myAvatar">?</div>
+                    <span id="myNameDisplay">Carregando...</span>
+                </div>
+            </div>
+
+            <div class="chat-list">
+                <div class="chat-item active">
+                    <div class="avatar-circle" style="background: #2196f3;">G</div>
+                    <div class="chat-info">
+                        <div class="chat-name">Sala Geral (Comunidade)</div>
+                        <div class="chat-sub">Conversa em tempo real com todos</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ÁREA DE CHAT -->
+        <div class="chat-area">
+            <div class="header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="avatar-circle" style="background: #2196f3;">G</div>
+                    <div>
+                        <div style="font-weight: bold; font-size: 15px;">Sala Geral</div>
+                        <div style="font-size: 12px; color: var(--accent);">● online em tempo real</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MENSAGENS EM TEMPO REAL -->
+            <div class="messages-container" id="messagesContainer">
+                <!-- As mensagens entram aqui via Firebase -->
+            </div>
+
+            <div class="input-bar">
+                <input type="text" id="messageInput" placeholder="Escreve uma mensagem..." onkeypress="tratarKeyPress(event)">
+                <button class="send-btn" onclick="enviarMensagem()"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // ======================================================
+    // CONFIGURAÇÃO DO FIREBASE (100% GRATUITO)
+    // ======================================================
+    // Substitui com as tuas chaves obtidas gratuitamente no Firebase Console
+    const firebaseConfig = {
+    apiKey: "AIzaSyBl16YIRDKf8QxFI57Jn0nX_HQ7TEf50nw",
+    authDomain: "muchanga-chat.firebaseapp.com",
+    databaseURL: "https://muchanga-chat-default-rtdb.firebaseio.com",
+    projectId: "muchanga-chat",
+    storageBucket: "muchanga-chat.firebasestorage.app",
+    messagingSenderId: "660584923294",
+    appId: "1:660584923294:web:54a14cc5853551596c7b8f",
+    measurementId: "G-PRBJTFN1KC"
+  };
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    let usuarioAtual = "";
+
+    // NAVEGAÇÃO DE ECRÃS
+    function irParaCadastro() {
+        document.getElementById("welcomeOverlay").style.display = "none";
+        document.getElementById("registerOverlay").style.display = "flex";
+    }
+
+    function iniciarSessao() {
+        const nome = document.getElementById("usernameInput").value.trim();
+        if (nome) {
+            usuarioAtual = nome;
+            const iniciais = nome.substring(0, 2).toUpperCase();
+            
+            document.getElementById("myAvatar").innerText = iniciais;
+            document.getElementById("myNameDisplay").innerText = nome;
+            document.getElementById("registerOverlay").style.display = "none";
+
+            ouvirMensagensEmTempoReal();
+        }
+    }
+
+    // ENVIAR MENSAGEM PARA A NUVEM
+    function enviarMensagem() {
+        const input = document.getElementById("messageInput");
+        const texto = input.value.trim();
+        if (!texto || !usuarioAtual) return;
+
+        const agora = new Date();
+        const horaStr = `${agora.getHours().toString().padStart(2, '0')}:${agora.getMinutes().toString().padStart(2, '0')}`;
+
+        // Envia para o banco de dados
+        database.ref("sala_geral").push({
+            autor: usuarioAtual,
+            texto: texto,
+            hora: horaStr,
+            timestamp: Date.now()
+        });
+
+        input.value = "";
+    }
+
+    // SINCRONIZAR MENSAGENS INSTANTANEAMENTE
+    function ouvirMensagensEmTempoReal() {
+        const container = document.getElementById("messagesContainer");
+
+        database.ref("sala_geral").on("value", (snapshot) => {
+            container.innerHTML = "";
+            const dados = snapshot.val();
+
+            if (dados) {
+                Object.values(dados).forEach(msg => {
+                    const souEu = msg.autor === usuarioAtual;
+                    const classeMsg = souEu ? "out" : "in";
+
+                    container.innerHTML += `
+                        <div class="msg ${classeMsg}">
+                            ${!souEu ? `<div class="msg-sender">${msg.autor}</div>` : ''}
+                            ${msg.texto}
+                            <span class="msg-time">${msg.hora}</span>
+                        </div>
+                    `;
+                });
+                container.scrollTop = container.scrollHeight;
+            }
+        });
+    }
+
+    function tratarKeyPress(e) {
+        if (e.key === "Enter") enviarMensagem();
+    }
+</script>
+</body>
+</html>
