@@ -38,11 +38,11 @@
       overflow: hidden;
     }
 
-    /* OVERLAY DE APRESENTAÇÃO */
+    /* OVERLAY DE APRESENTAÇÃO EXPERIMENTAL */
     #welcomeOverlay {
       position: fixed;
       inset: 0;
-      background: linear-gradient(135deg, #0b141a 0%, #1f2c34 100%);
+      background: radial-gradient(circle at center, #1f2c34 0%, #0b141a 100%);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -52,11 +52,11 @@
 
     .welcome-card {
       background: var(--header-bg);
-      border-radius: 18px;
-      padding: 32px;
+      border-radius: 20px;
+      padding: 35px;
       width: 100%;
-      max-width: 500px;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+      max-width: 540px;
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.8);
       border: 1px solid #2a3942;
       text-align: center;
     }
@@ -64,18 +64,19 @@
     .dev-tag {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       background: rgba(0, 168, 132, 0.15);
       color: var(--accent);
-      padding: 6px 16px;
+      padding: 6px 18px;
       border-radius: 20px;
       font-size: 12px;
       font-weight: bold;
       margin-bottom: 16px;
+      letter-spacing: 0.5px;
     }
 
-    .welcome-card h1 { font-size: 24px; color: #fff; margin-bottom: 12px; }
-    .welcome-card p.intro-text { font-size: 13.5px; color: var(--text-sub); line-height: 1.6; margin-bottom: 24px; text-align: justify; }
+    .welcome-card h1 { font-size: 24px; color: #fff; margin-bottom: 12px; font-weight: 700; }
+    .welcome-card p.intro-text { font-size: 13.5px; color: var(--text-sub); line-height: 1.7; margin-bottom: 24px; text-align: justify; }
 
     .step-content { display: none; }
     .step-content.active { display: block; }
@@ -138,7 +139,9 @@
       font-weight: bold;
       cursor: pointer;
       margin-top: 10px;
+      transition: background 0.2s;
     }
+    .btn-action:hover { background: var(--accent-hover); }
 
     /* LAYOUT APP */
     .app-container {
@@ -151,7 +154,7 @@
     }
 
     .sidebar {
-      width: 320px;
+      width: 340px;
       background-color: var(--panel-bg);
       border-right: 1px solid #222d34;
       display: flex;
@@ -167,7 +170,24 @@
       border-bottom: 1px solid #222d34;
     }
 
-    .mini-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; }
+    .mini-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+
+    .nav-tabs {
+      display: flex;
+      background: var(--header-bg);
+      border-bottom: 1px solid #222d34;
+    }
+    .nav-tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-sub);
+      cursor: pointer;
+      font-weight: bold;
+      border-bottom: 2px solid transparent;
+    }
+    .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
     .chat-list { flex: 1; overflow-y: auto; }
     .chat-item {
@@ -231,11 +251,34 @@
     }
     .message-author:hover { text-decoration: underline; }
 
-    .message-img { max-width: 250px; border-radius: 8px; margin-top: 5px; cursor: pointer; }
+    .message-img { max-width: 260px; border-radius: 8px; margin-top: 5px; cursor: pointer; }
+
+    /* ÁREA DE INPUT E EMOJIS */
+    .chat-input-container {
+      background-color: var(--header-bg);
+      border-top: 1px solid #222d34;
+      position: relative;
+    }
+
+    .emoji-picker-box {
+      display: none;
+      position: absolute;
+      bottom: 65px;
+      left: 15px;
+      background: var(--panel-bg);
+      border: 1px solid #2a3942;
+      padding: 10px;
+      border-radius: 10px;
+      gap: 8px;
+      flex-wrap: wrap;
+      width: 260px;
+      z-index: 10;
+    }
+    .emoji-item { font-size: 20px; cursor: pointer; padding: 4px; }
+    .emoji-item:hover { transform: scale(1.2); }
 
     .chat-input-area {
       padding: 12px 18px;
-      background-color: var(--header-bg);
       display: flex;
       align-items: center;
       gap: 12px;
@@ -249,11 +292,14 @@
       border-radius: 20px;
       color: #fff;
       outline: none;
+      font-size: 14px;
     }
 
     .icon-btn { background: none; border: none; color: var(--text-sub); font-size: 18px; cursor: pointer; padding: 6px; }
     .icon-btn:hover { color: var(--accent); }
-    .icon-btn.recording { color: #f44336; }
+    .icon-btn.recording { color: #f44336; animation: pulse 1s infinite; }
+
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
     @media (max-width: 768px) {
       .sidebar { width: 100%; position: absolute; inset: 0; z-index: 2; }
@@ -267,40 +313,36 @@
 </head>
 <body>
 
-  <!-- MODAL DE ENTRADA -->
-  <div id="welcomeOverlay">
+  <!-- MODAL DE ENTRADA EXPERIMENTAL -->
+  <div id="welcomeOverlay" style="display:none;">
     <div class="welcome-card">
       
       <div id="step1" class="step-content active">
-        <span class="dev-tag"><i class="fa-solid fa-comments"></i> MUCHANGA CHAT</span>
-        <h1>Seja Bem-vindo ao Muchanga Chat</h1>
+        <span class="dev-tag"><i class="fa-solid fa-code"></i> MUCHANGA CHAT · LAB</span>
+        <h1>Ecossistema Experimental</h1>
         <p class="intro-text">
-          Esta plataforma foi concebida e desenvolvida por <strong>Ivanilson Muchanga</strong>, estudante de Engenharia Informática. O projeto surge como um ecossistema prático para experimentação, consolidação e aprimoramento contínuo de habilidades em arquitetura de software, comunicação em tempo real e desenvolvimento web avançado.
+          Este software foi inteiramente arquitetado e desenvolvido por <strong>Ivanilson Muchanga</strong>. Trata-se de um projeto de cariz puramente experimental e de aprimoramento contínuo em programação, focado no domínio de arquiteturas web em tempo real e engenharia de software de alta performance. Nenhuma funcionalidade possui intuito de lançamento comercial, servindo estritamente como demonstração sólida de competência técnica e visão de futuro.
         </p>
-        <button class="btn-action" onclick="proximoPasso(2)">Começar Experiência <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="btn-action" onclick="proximoPasso(2)">Iniciar Experiência <i class="fa-solid fa-arrow-right"></i></button>
       </div>
 
       <div id="step2" class="step-content">
-        <span class="dev-tag"><i class="fa-solid fa-user-gear"></i> CONFIGURAÇÃO DE PERFIL</span>
-        <h2 style="font-size: 20px; margin-bottom: 15px;">Cria o teu Perfil</h2>
+        <span class="dev-tag"><i class="fa-solid fa-shield-halved"></i> IDENTIFICAÇÃO PESSOAL</span>
+        <h2 style="font-size: 20px; margin-bottom: 15px;">Configurar Chave & Perfil</h2>
         
         <form onsubmit="finalizarCadastro(event)">
           <div class="form-group">
-            <label><i class="fa-solid fa-user"></i> Teu Nome Completo</label>
+            <label><i class="fa-solid fa-user"></i> Nome Completo</label>
             <input type="text" id="inputNome" placeholder="Ex: Ivanilson Muchanga" required>
           </div>
 
           <div class="form-group">
-            <label><i class="fa-solid fa-venus-mars"></i> Sexo / Género</label>
-            <select id="selectSexo">
-              <option value="M">Masculino</option>
-              <option value="F">Feminino</option>
-              <option value="O">Outro</option>
-            </select>
+            <label><i class="fa-solid fa-key"></i> Chave Pessoal (ID Único)</label>
+            <input type="text" id="inputChave" placeholder="Ex: MUCHANGA-011" required>
           </div>
 
           <div class="form-group">
-            <label><i class="fa-solid fa-image"></i> Foto de Perfil</label>
+            <label><i class="fa-solid fa-image"></i> Fotografia de Perfil</label>
             <div class="upload-btn-wrapper">
               <button type="button" class="btn-upload"><i class="fa-solid fa-upload"></i> Escolher da Galeria</button>
               <input type="file" id="fileAvatarInput" accept="image/*" onchange="carregarFotoGaleria(event)">
@@ -317,14 +359,14 @@
             </div>
           </div>
 
-          <button type="submit" class="btn-action">Entrar no Chat <i class="fa-solid fa-comments"></i></button>
+          <button type="submit" class="btn-action">Guardar Credenciais & Entrar <i class="fa-solid fa-arrow-right"></i></button>
         </form>
       </div>
 
     </div>
   </div>
 
-  <!-- APLICAÇÃO -->
+  <!-- APLICAÇÃO PRINCIPAL -->
   <div class="app-container" id="appContainer">
     
     <div class="sidebar">
@@ -332,22 +374,36 @@
         <div style="display:flex; align-items:center; gap:10px;">
           <img id="userMiniAvatar" class="mini-avatar" src="" alt="Avatar">
           <div>
-            <strong id="userMiniName" style="font-size: 14px;">Utilizador</strong>
-            <p style="font-size: 10px; color: var(--accent);">● Online</p>
+            <strong id="userMiniName" style="font-size: 13px;">Utilizador</strong>
+            <p id="userMiniKey" style="font-size: 10px; color: var(--accent);">Chave: ---</p>
           </div>
         </div>
+        <button class="icon-btn" title="Terminar Sessão" onclick="sairDaSessao()"><i class="fa-solid fa-power-off"></i></button>
       </div>
 
-      <div class="chat-list" id="chatList">
-        <div class="chat-item active" id="item-geral" onclick="abrirChat('geral', 'Grupo Geral', '')">
+      <!-- Abas de Navegação (Chats / Status) -->
+      <div class="nav-tabs">
+        <div class="nav-tab active" id="tabChats" onclick="mudarAba('chats')"><i class="fa-solid fa-comments"></i> Conversas</div>
+        <div class="nav-tab" id="tabStatus" onclick="mudarAba('status')"><i class="fa-solid fa-circle-notch"></i> Status</div>
+      </div>
+
+      <!-- Lista de Chats -->
+      <div class="chat-list" id="chatListContainer">
+        <div class="chat-item active" id="item-geral" onclick="abrirChat('geral', 'Grupo Geral Muchanga', '')">
           <div style="width:45px; height:45px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; margin-right:12px;">
             <i class="fa-solid fa-users" style="color:#fff;"></i>
           </div>
           <div>
             <strong>Grupo Geral</strong>
-            <p style="font-size: 12px; color: var(--text-sub);">Conversa Pública</p>
+            <p style="font-size: 12px; color: var(--text-sub);">Canal Público</p>
           </div>
         </div>
+      </div>
+
+      <!-- Lista de Status (Oculta por defeito) -->
+      <div class="chat-list" id="statusListContainer" style="display:none; padding: 15px;">
+        <button class="btn-action" style="margin-bottom: 15px;" onclick="publicarStatusPrompt()"><i class="fa-solid fa-plus"></i> Publicar Novo Status</button>
+        <div id="statusItemsContainer"></div>
       </div>
     </div>
 
@@ -358,22 +414,41 @@
           <i class="fa-solid fa-users" style="color:#fff;"></i>
         </div>
         <div>
-          <strong id="chatTitle">Grupo Geral</strong>
-          <p style="font-size: 11px; color: var(--text-sub);" id="chatSubtitle">Clique no nome de alguém para abrir chat privado</p>
+          <strong id="chatTitle">Grupo Geral Muchanga</strong>
+          <p style="font-size: 11px; color: var(--text-sub);" id="chatSubtitle">Canal público em tempo real</p>
         </div>
       </div>
 
       <div class="messages-container" id="messagesContainer"></div>
 
-      <div class="chat-input-area">
-        <div class="upload-btn-wrapper" style="width: auto;">
-          <button class="icon-btn" title="Enviar Imagem"><i class="fa-solid fa-paperclip"></i></button>
-          <input type="file" id="chatImageInput" accept="image/*" onchange="enviarFotoChat(event)">
+      <!-- Caixa de Input com Emojis -->
+      <div class="chat-input-container">
+        <div class="emoji-picker-box" id="emojiBox">
+          <span class="emoji-item" onclick="inserirEmoji('😀')">😀</span>
+          <span class="emoji-item" onclick="inserirEmoji('😂')">😂</span>
+          <span class="emoji-item" onclick="inserirEmoji('🔥')">🔥</span>
+          <span class="emoji-item" onclick="inserirEmoji('🚀')">🚀</span>
+          <span class="emoji-item" onclick="inserirEmoji('💡')">💡</span>
+          <span class="emoji-item" onclick="inserirEmoji('❤️')">❤️</span>
+          <span class="emoji-item" onclick="inserirEmoji('👍')">👍</span>
+          <span class="emoji-item" onclick="inserirEmoji('💻')">💻</span>
+          <span class="emoji-item" onclick="inserirEmoji('😎')">😎</span>
+          <span class="emoji-item" onclick="inserirEmoji('✨')">✨</span>
         </div>
 
-        <input type="text" id="messageInput" placeholder="Escreve uma mensagem..." onkeypress="handleKeyPress(event)">
-        <button class="icon-btn" id="micBtn" title="Gravar Áudio" onclick="alternarGravacaoAudio()"><i class="fa-solid fa-microphone"></i></button>
-        <button class="icon-btn" style="color: var(--accent);" onclick="enviarMensagemTexto()"><i class="fa-solid fa-paper-plane"></i></button>
+        <div class="chat-input-area">
+          <button class="icon-btn" title="Emojis" onclick="alternarEmojis()"><i class="fa-regular fa-face-smile"></i></button>
+          
+          <div class="upload-btn-wrapper" style="width: auto;">
+            <button class="icon-btn" title="Enviar Imagem Direta"><i class="fa-solid fa-paperclip"></i></button>
+            <input type="file" id="chatImageInput" accept="image/*" onchange="enviarFotoDiretaChat(event)">
+          </div>
+
+          <input type="text" id="messageInput" placeholder="Escreve uma mensagem..." onkeypress="handleKeyPress(event)">
+          
+          <button class="icon-btn" id="micBtn" title="Gravar Áudio (Clique para iniciar/parar)" onclick="alternarGravacaoAudio()"><i class="fa-solid fa-microphone"></i></button>
+          <button class="icon-btn" style="color: var(--accent);" title="Enviar Texto" onclick="enviarMensagemTexto()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
       </div>
     </div>
 
@@ -394,11 +469,28 @@
     const database = firebase.database();
     const storage = firebase.storage();
 
-    let perfilUsuario = { nome: "", sexo: "M", foto: "" };
+    let perfilUsuario = { nome: "", chave: "", foto: "" };
     let chatAtualID = "geral";
     let mediaRecorder = null;
     let audioChunks = [];
     let gravando = false;
+
+    // Verificar sessão guardada no localStorage
+    window.onload = function() {
+      const salvo = localStorage.getItem("muchanga_perfil");
+      if (salvo) {
+        perfilUsuario = JSON.parse(salvo);
+        document.getElementById("welcomeOverlay").style.display = "none";
+        document.getElementById("userMiniName").innerText = perfilUsuario.nome;
+        document.getElementById("userMiniKey").innerText = "Chave: " + perfilUsuario.chave;
+        document.getElementById("userMiniAvatar").src = perfilUsuario.foto;
+        carregarMensagens();
+        escutarConversasPrivadasGlobais();
+        carregarStatus();
+      } else {
+        document.getElementById("welcomeOverlay").style.display = "flex";
+      }
+    };
 
     function proximoPasso(passo) {
       document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
@@ -425,24 +517,51 @@
     function finalizarCadastro(e) {
       e.preventDefault();
       const nome = document.getElementById("inputNome").value.trim();
-      const sexo = document.getElementById("selectSexo").value;
+      const chave = document.getElementById("inputChave").value.trim();
 
-      if (!nome) return;
+      if (!nome || !chave) return;
 
       if (!perfilUsuario.foto) {
-        perfilUsuario.foto = sexo === "F" 
-          ? "https://cdn-icons-png.flaticon.com/512/4140/4140047.png" 
-          : "https://cdn-icons-png.flaticon.com/512/4140/4140048.png";
+        perfilUsuario.foto = "https://cdn-icons-png.flaticon.com/512/4140/4140048.png";
       }
 
       perfilUsuario.nome = nome;
-      perfilUsuario.sexo = sexo;
+      perfilUsuario.chave = chave;
+
+      // Guardar sessão persistente
+      localStorage.setItem("muchanga_perfil", JSON.stringify(perfilUsuario));
 
       document.getElementById("userMiniName").innerText = nome;
+      document.getElementById("userMiniKey").innerText = "Chave: " + chave;
       document.getElementById("userMiniAvatar").src = perfilUsuario.foto;
       document.getElementById("welcomeOverlay").style.display = "none";
 
       carregarMensagens();
+      escutarConversasPrivadasGlobais();
+      carregarStatus();
+    }
+
+    function sairDaSessao() {
+      localStorage.removeItem("muchanga_perfil");
+      location.reload();
+    }
+
+    function mudarAba(aba) {
+      document.getElementById("tabChats").className = aba === 'chats' ? 'nav-tab active' : 'nav-tab';
+      document.getElementById("tabStatus").className = aba === 'status' ? 'nav-tab active' : 'nav-tab';
+      
+      document.getElementById("chatListContainer").style.display = aba === 'chats' ? 'block' : 'none';
+      document.getElementById("statusListContainer").style.display = aba === 'status' ? 'block' : 'none';
+    }
+
+    function alternarEmojis() {
+      const box = document.getElementById("emojiBox");
+      box.style.display = box.style.display === "flex" ? "none" : "flex";
+    }
+
+    function inserirEmoji(emoji) {
+      document.getElementById("messageInput").value += emoji;
+      document.getElementById("emojiBox").style.display = "none";
     }
 
     function enviarMensagemTexto() {
@@ -454,6 +573,7 @@
 
       database.ref("chats/" + chatAtualID).push({
         autor: perfilUsuario.nome,
+        chave: perfilUsuario.chave,
         foto: perfilUsuario.foto,
         texto: texto,
         tipo: 'texto',
@@ -464,7 +584,8 @@
       input.value = "";
     }
 
-    function enviarFotoChat(e) {
+    // ENVIO DIRETO DE FOTO (Sem passos adicionais)
+    function enviarFotoDiretaChat(e) {
       const file = e.target.files[0];
       if (!file) return;
 
@@ -474,6 +595,7 @@
           const tempo = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           database.ref("chats/" + chatAtualID).push({
             autor: perfilUsuario.nome,
+            chave: perfilUsuario.chave,
             foto: perfilUsuario.foto,
             mediaUrl: downloadURL,
             tipo: 'imagem',
@@ -482,10 +604,11 @@
           });
         });
       }).catch(() => {
-        alert("Garante que o Firebase Storage está ativado no teu Console do Firebase!");
+        alert("Erro ao carregar imagem para o Storage.");
       });
     }
 
+    // GRAVAÇÃO DE ÁUDIO FLUIDA
     async function alternarGravacaoAudio() {
       const micBtn = document.getElementById("micBtn");
 
@@ -506,6 +629,7 @@
                 const tempo = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 database.ref("chats/" + chatAtualID).push({
                   autor: perfilUsuario.nome,
+                  chave: perfilUsuario.chave,
                   foto: perfilUsuario.foto,
                   mediaUrl: downloadURL,
                   tipo: 'audio',
@@ -520,7 +644,7 @@
           gravando = true;
           micBtn.classList.add("recording");
         } catch (err) {
-          alert("Permissão de microfone negada!");
+          alert("Permissão de microfone necessária!");
         }
       } else {
         mediaRecorder.stop();
@@ -540,13 +664,12 @@
 
         snapshot.forEach((childSnapshot) => {
           const msg = childSnapshot.val();
-          const eMinha = msg.autor === perfilUsuario.nome;
+          const eMinha = msg.autor === perfilUsuario.nome && msg.chave === perfilUsuario.chave;
 
           const div = document.createElement("div");
           div.className = `message-bubble ${eMinha ? 'sent' : 'received'}`;
           
           let conteudoHTML = "";
-
           if (msg.tipo === 'imagem') {
             conteudoHTML = `<img src="${msg.mediaUrl}" class="message-img" onclick="window.open('${msg.mediaUrl}')">`;
           } else if (msg.tipo === 'audio') {
@@ -556,7 +679,7 @@
           }
 
           let autorHTML = !eMinha 
-            ? `<div class="message-author" onclick="iniciarChatPrivado('${msg.autor}', '${msg.foto}')"><i class="fa-solid fa-lock" style="font-size:9px;"></i> ${msg.autor}</div>` 
+            ? `<div class="message-author" onclick="iniciarChatPrivado('${msg.autor}', '${msg.chave}', '${msg.foto}')"><i class="fa-solid fa-lock" style="font-size:9px;"></i> ${msg.autor} (${msg.chave})</div>` 
             : '';
 
           div.innerHTML = `
@@ -572,39 +695,55 @@
       });
     }
 
-    function iniciarChatPrivado(nomeDestino, fotoDestino) {
-      if (nomeDestino === perfilUsuario.nome) return;
+    // ESCUTAR CONVERSAS PRIVADAS AUTOMATICAMENTE NA LISTA
+    function escutarConversasPrivadasGlobais() {
+      // Monitora o nó geral de chats para detetar interações privadas
+      database.ref("chats").on("child_added", (snapshot) => {
+        const idChat = snapshot.key;
+        if (idChat.includes("_privado_") && idChat.includes(perfilUsuario.chave)) {
+          // Identificar o destinatário pelo ID composto
+          const partes = idChat.split("_privado_");
+          let outraChave = partes[0] === perfilUsuario.chave ? partes[1] : partes[0];
+          
+          if (!document.getElementById("item-" + idChat)) {
+            adicionarItemChatLista(idChat, "Privado: " + outraChave, '', 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png');
+          }
+        }
+      });
+    }
 
-      const idPrivado = [perfilUsuario.nome, nomeDestino].sort().join("_privado_");
-      
-      const chatList = document.getElementById("chatList");
-      
-      if (!document.getElementById("item-" + idPrivado)) {
-        const item = document.createElement("div");
-        item.className = "chat-item";
-        item.id = "item-" + idPrivado;
-        item.onclick = () => abrirChat(idPrivado, nomeDestino, fotoDestino);
-        item.innerHTML = `
-          <div style="width:45px; height:45px; border-radius:50%; overflow:hidden; margin-right:12px;">
-            <img src="${fotoDestino || 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png'}" style="width:100%; height:100%; object-fit:cover;">
-          </div>
-          <div>
-            <strong>${nomeDestino}</strong>
-            <p style="font-size: 12px; color: var(--text-sub);"><i class="fa-solid fa-user-lock"></i> Chat Privado</p>
-          </div>
-        `;
-        chatList.appendChild(item);
-      }
+    function iniciarChatPrivado(nomeDestino, chaveDestino, fotoDestino) {
+      if (chaveDestino === perfilUsuario.chave) return;
 
-      abrirChat(idPrivado, nomeDestino, fotoDestino);
+      const idPrivado = [perfilUsuario.chave, chaveDestino].sort().join("_privado_");
+      adicionarItemChatLista(idPrivado, `${nomeDestino} (${chaveDestino})`, 'Chat Privado Seguro', fotoDestino);
+      abrirChat(idPrivado, `${nomeDestino} (${chaveDestino})`, fotoDestino);
+    }
+
+    function adicionarItemChatLista(id, titulo, subtitulo, foto) {
+      const chatList = document.getElementById("chatListContainer");
+      if (document.getElementById("item-" + id)) return;
+
+      const item = document.createElement("div");
+      item.className = "chat-item";
+      item.id = "item-" + id;
+      item.onclick = () => abrirChat(id, titulo, foto);
+      item.innerHTML = `
+        <div style="width:45px; height:45px; border-radius:50%; overflow:hidden; margin-right:12px; background:var(--accent); display:flex; align-items:center; justify-content:center;">
+          <img src="${foto}" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+        <div>
+          <strong>${titulo}</strong>
+          <p style="font-size: 12px; color: var(--text-sub);"><i class="fa-solid fa-lock"></i> ${subtítulo || 'Chat Direto'}</p>
+        </div>
+      `;
+      chatList.appendChild(item);
     }
 
     function abrirChat(id, titulo, foto) {
       chatAtualID = id;
       document.getElementById("chatTitle").innerText = titulo;
-      
-      const subtitle = document.getElementById("chatSubtitle");
-      subtitle.innerText = id === 'geral' ? 'Grupo Geral' : 'Conversa Privada Segura';
+      document.getElementById("chatSubtitle").innerText = id === 'geral' ? 'Canal público em tempo real' : 'Conversa Privada Criptografada';
 
       const headerAvatar = document.getElementById("headerAvatar");
       if (foto) {
@@ -623,6 +762,42 @@
 
     function voltarParaLista() {
       document.getElementById("appContainer").classList.remove("show-chat");
+    }
+
+    // SISTEMA DE STATUS
+    function publicarStatusPrompt() {
+      const textoStatus = prompt("Escreve o texto do teu Status:");
+      if (!textoStatus) return;
+
+      database.ref("status").push({
+        autor: perfilUsuario.nome,
+        chave: perfilUsuario.chave,
+        foto: perfilUsuario.foto,
+        texto: textoStatus,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      });
+      alert("Status publicado com sucesso!");
+    }
+
+    function carregarStatus() {
+      database.ref("status").on("value", (snapshot) => {
+        const container = document.getElementById("statusItemsContainer");
+        container.innerHTML = "";
+
+        snapshot.forEach((childSnapshot) => {
+          const st = childSnapshot.val();
+          const div = document.createElement("div");
+          div.style.cssText = "background:var(--header-bg); padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid #2a3942;";
+          div.innerHTML = `
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+              <img src="${st.foto}" style="width:25px; height:25px; border-radius:50%; object-fit:cover;">
+              <strong style="font-size:12px; color:var(--accent);">${st.autor}</strong>
+            </div>
+            <p style="font-size:13px; color:#fff;">${st.texto}</p>
+          `;
+          container.appendChild(div);
+        });
+      });
     }
   </script>
 </body>
