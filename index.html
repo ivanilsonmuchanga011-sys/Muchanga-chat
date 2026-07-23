@@ -38,7 +38,7 @@
       overflow: hidden;
     }
 
-    /* OVERLAY DE APRESENTAÇÃO EXPERIMENTAL */
+    /* OVERLAY DE APRESENTAÇÃO HUMANA E DE ALTO NÍVEL */
     #welcomeOverlay {
       position: fixed;
       inset: 0;
@@ -75,15 +75,15 @@
       letter-spacing: 0.5px;
     }
 
-    .welcome-card h1 { font-size: 24px; color: #fff; margin-bottom: 12px; font-weight: 700; }
-    .welcome-card p.intro-text { font-size: 13.5px; color: var(--text-sub); line-height: 1.7; margin-bottom: 24px; text-align: justify; }
+    .welcome-card h1 { font-size: 26px; color: #fff; margin-bottom: 12px; font-weight: 700; }
+    .welcome-card p.intro-text { font-size: 14px; color: var(--text-sub); line-height: 1.7; margin-bottom: 24px; text-align: justify; }
 
     .step-content { display: none; }
     .step-content.active { display: block; }
 
     .form-group { text-align: left; margin-bottom: 18px; }
     .form-group label { display: block; font-size: 12px; color: var(--accent); font-weight: bold; margin-bottom: 6px; }
-    .form-group input, .form-group select {
+    .form-group input {
       width: 100%;
       padding: 12px;
       background: var(--panel-bg);
@@ -313,22 +313,22 @@
 </head>
 <body>
 
-  <!-- MODAL DE ENTRADA EXPERIMENTAL -->
+  <!-- MODAL DE BOAS-VINDAS CAPRICHADO -->
   <div id="welcomeOverlay" style="display:none;">
     <div class="welcome-card">
       
       <div id="step1" class="step-content active">
-        <span class="dev-tag"><i class="fa-solid fa-code"></i> MUCHANGA CHAT · LAB</span>
-        <h1>Ecossistema Experimental</h1>
+        <span class="dev-tag"><i class="fa-solid fa-code"></i> MUCHANGA CHAT · PLATAFORMA EXPERIMENTAL</span>
+        <h1>Bem-vindo ao Muchanga Chat</h1>
         <p class="intro-text">
-          Este software foi inteiramente arquitetado e desenvolvido por <strong>Ivanilson Muchanga</strong>. Trata-se de um projeto de cariz puramente experimental e de aprimoramento contínuo em programação, focado no domínio de arquiteturas web em tempo real e engenharia de software de alta performance. Nenhuma funcionalidade possui intuito de lançamento comercial, servindo estritamente como demonstração sólida de competência técnica e visão de futuro.
+          Olá! Este programa foi inteiramente concebido e desenvolvido com muita dedicação pelo Dev. <strong>Ivanilson Muchanga</strong>. Trata-se de um ecossistema digital interativo e de cariz experimental, criado com o propósito de explorar e consolidar competências avançadas em programação web, arquiteturas em tempo real e engenharia de software. Aqui demonstro paixão pela tecnologia, visão de futuro e a certeza de que grandes projetos começam na prática.
         </p>
-        <button class="btn-action" onclick="proximoPasso(2)">Iniciar Experiência <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="btn-action" onclick="proximoPasso(2)">Avançar para a Configuração <i class="fa-solid fa-arrow-right"></i></button>
       </div>
 
       <div id="step2" class="step-content">
         <span class="dev-tag"><i class="fa-solid fa-shield-halved"></i> IDENTIFICAÇÃO PESSOAL</span>
-        <h2 style="font-size: 20px; margin-bottom: 15px;">Configurar Chave & Perfil</h2>
+        <h2 style="font-size: 20px; margin-bottom: 15px;">Configurar o Teu Perfil & Chave</h2>
         
         <form onsubmit="finalizarCadastro(event)">
           <div class="form-group">
@@ -338,7 +338,7 @@
 
           <div class="form-group">
             <label><i class="fa-solid fa-key"></i> Chave Pessoal (ID Único)</label>
-            <input type="text" id="inputChave" placeholder="Ex: MUCHANGA-011" required>
+            <input type="text" id="inputChave" placeholder="Ex: MUCH-011" required>
           </div>
 
           <div class="form-group">
@@ -359,7 +359,7 @@
             </div>
           </div>
 
-          <button type="submit" class="btn-action">Guardar Credenciais & Entrar <i class="fa-solid fa-arrow-right"></i></button>
+          <button type="submit" class="btn-action">Entrar no Muchanga Chat <i class="fa-solid fa-arrow-right"></i></button>
         </form>
       </div>
 
@@ -381,7 +381,7 @@
         <button class="icon-btn" title="Terminar Sessão" onclick="sairDaSessao()"><i class="fa-solid fa-power-off"></i></button>
       </div>
 
-      <!-- Abas de Navegação (Chats / Status) -->
+      <!-- Abas de Navegação -->
       <div class="nav-tabs">
         <div class="nav-tab active" id="tabChats" onclick="mudarAba('chats')"><i class="fa-solid fa-comments"></i> Conversas</div>
         <div class="nav-tab" id="tabStatus" onclick="mudarAba('status')"><i class="fa-solid fa-circle-notch"></i> Status</div>
@@ -400,9 +400,17 @@
         </div>
       </div>
 
-      <!-- Lista de Status (Oculta por defeito) -->
+      <!-- Gestão de Status Completa -->
       <div class="chat-list" id="statusListContainer" style="display:none; padding: 15px;">
-        <button class="btn-action" style="margin-bottom: 15px;" onclick="publicarStatusPrompt()"><i class="fa-solid fa-plus"></i> Publicar Novo Status</button>
+        <div style="margin-bottom: 15px; background: var(--header-bg); padding: 12px; border-radius: 8px;">
+          <strong style="font-size: 13px; display: block; margin-bottom: 8px;">Publicar novo Status</strong>
+          <input type="text" id="statusTextInput" placeholder="Escreve uma legenda..." style="width:100%; padding:8px; background:var(--panel-bg); border:1px solid #2a3942; border-radius:6px; color:#fff; font-size:13px; margin-bottom:8px;">
+          <div class="upload-btn-wrapper" style="width:100%;">
+            <button class="btn-upload" style="padding:8px; font-size:12px;"><i class="fa-solid fa-image"></i> Adicionar Foto ao Status</button>
+            <input type="file" id="statusImageInput" accept="image/*" onchange="publicarStatusComFoto(event)">
+          </div>
+          <button class="btn-action" style="margin-top:8px; padding:8px; font-size:13px;" onclick="publicarStatusApenasTexto()">Publicar Apenas Texto</button>
+        </div>
         <div id="statusItemsContainer"></div>
       </div>
     </div>
@@ -446,7 +454,7 @@
 
           <input type="text" id="messageInput" placeholder="Escreve uma mensagem..." onkeypress="handleKeyPress(event)">
           
-          <button class="icon-btn" id="micBtn" title="Gravar Áudio (Clique para iniciar/parar)" onclick="alternarGravacaoAudio()"><i class="fa-solid fa-microphone"></i></button>
+          <button class="icon-btn" id="micBtn" title="Gravar Áudio" onclick="alternarGravacaoAudio()"><i class="fa-solid fa-microphone"></i></button>
           <button class="icon-btn" style="color: var(--accent);" title="Enviar Texto" onclick="enviarMensagemTexto()"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
       </div>
@@ -475,7 +483,6 @@
     let audioChunks = [];
     let gravando = false;
 
-    // Verificar sessão guardada no localStorage
     window.onload = function() {
       const salvo = localStorage.getItem("muchanga_perfil");
       if (salvo) {
@@ -520,7 +527,6 @@
       const chave = document.getElementById("inputChave").value.trim();
 
       if (!nome || !chave) return;
-
       if (!perfilUsuario.foto) {
         perfilUsuario.foto = "https://cdn-icons-png.flaticon.com/512/4140/4140048.png";
       }
@@ -528,7 +534,6 @@
       perfilUsuario.nome = nome;
       perfilUsuario.chave = chave;
 
-      // Guardar sessão persistente
       localStorage.setItem("muchanga_perfil", JSON.stringify(perfilUsuario));
 
       document.getElementById("userMiniName").innerText = nome;
@@ -584,7 +589,6 @@
       input.value = "";
     }
 
-    // ENVIO DIRETO DE FOTO (Sem passos adicionais)
     function enviarFotoDiretaChat(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -603,12 +607,11 @@
             timestamp: firebase.database.ServerValue.TIMESTAMP
           });
         });
-      }).catch(() => {
-        alert("Erro ao carregar imagem para o Storage.");
+      }).catch(err => {
+        alert("Erro ao enviar imagem: " + err.message);
       });
     }
 
-    // GRAVAÇÃO DE ÁUDIO FLUIDA
     async function alternarGravacaoAudio() {
       const micBtn = document.getElementById("micBtn");
 
@@ -644,7 +647,7 @@
           gravando = true;
           micBtn.classList.add("recording");
         } catch (err) {
-          alert("Permissão de microfone necessária!");
+          alert("Permissão de microfone negada ou indisponível.");
         }
       } else {
         mediaRecorder.stop();
@@ -695,13 +698,10 @@
       });
     }
 
-    // ESCUTAR CONVERSAS PRIVADAS AUTOMATICAMENTE NA LISTA
     function escutarConversasPrivadasGlobais() {
-      // Monitora o nó geral de chats para detetar interações privadas
       database.ref("chats").on("child_added", (snapshot) => {
         const idChat = snapshot.key;
         if (idChat.includes("_privado_") && idChat.includes(perfilUsuario.chave)) {
-          // Identificar o destinatário pelo ID composto
           const partes = idChat.split("_privado_");
           let outraChave = partes[0] === perfilUsuario.chave ? partes[1] : partes[0];
           
@@ -734,7 +734,7 @@
         </div>
         <div>
           <strong>${titulo}</strong>
-          <p style="font-size: 12px; color: var(--text-sub);"><i class="fa-solid fa-lock"></i> ${subtítulo || 'Chat Direto'}</p>
+          <p style="font-size: 12px; color: var(--text-sub);"><i class="fa-solid fa-lock"></i> ${subtitulo || 'Chat Direto'}</p>
         </div>
       `;
       chatList.appendChild(item);
@@ -764,19 +764,51 @@
       document.getElementById("appContainer").classList.remove("show-chat");
     }
 
-    // SISTEMA DE STATUS
-    function publicarStatusPrompt() {
-      const textoStatus = prompt("Escreve o texto do teu Status:");
-      if (!textoStatus) return;
+    // GESTÃO DE STATUS (Texto, Foto, Visualizações e Respostas)
+    function publicarStatusApenasTexto() {
+      const texto = document.getElementById("statusTextInput").value.trim();
+      if (!texto) return alert("Escreve algum texto para o status.");
 
       database.ref("status").push({
         autor: perfilUsuario.nome,
         chave: perfilUsuario.chave,
         foto: perfilUsuario.foto,
-        texto: textoStatus,
+        texto: texto,
+        tipo: 'texto',
+        visualizacoes: { [perfilUsuario.chave]: perfilUsuario.nome },
         timestamp: firebase.database.ServerValue.TIMESTAMP
       });
+
+      document.getElementById("statusTextInput").value = "";
       alert("Status publicado com sucesso!");
+    }
+
+    function publicarStatusComFoto(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const texto = document.getElementById("statusTextInput").value.trim();
+      const fileRef = storage.ref(`status_images/${Date.now()}_${file.name}`);
+
+      fileRef.put(file).then(snapshot => {
+        snapshot.ref.getDownloadURL().then(downloadURL => {
+          database.ref("status").push({
+            autor: perfilUsuario.nome,
+            chave: perfilUsuario.chave,
+            foto: perfilUsuario.foto,
+            texto: texto || "",
+            mediaUrl: downloadURL,
+            tipo: 'imagem',
+            visualizacoes: { [perfilUsuario.chave]: perfilUsuario.nome },
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+          });
+
+          document.getElementById("statusTextInput").value = "";
+          alert("Status com foto publicado com sucesso!");
+        });
+      }).catch(err => {
+        alert("Erro ao publicar status: " + err.message);
+      });
     }
 
     function carregarStatus() {
@@ -785,15 +817,32 @@
         container.innerHTML = "";
 
         snapshot.forEach((childSnapshot) => {
+          const stId = childSnapshot.key;
           const st = childSnapshot.val();
+
+          database.ref(`status/${stId}/visualizacoes/${perfilUsuario.chave}`).set(perfilUsuario.nome);
+
           const div = document.createElement("div");
-          div.style.cssText = "background:var(--header-bg); padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid #2a3942;";
+          div.style.cssText = "background:var(--header-bg); padding:12px; border-radius:8px; margin-bottom:12px; border:1px solid #2a3942;";
+          
+          let conteudoMidia = st.tipo === 'imagem' ? `<img src="${st.mediaUrl}" style="width:100%; border-radius:6px; margin-top:8px; max-height:200px; object-fit:cover;">` : '';
+          
+          const visualizadores = st.visualizacoes ? Object.values(st.visualizacoes) : [];
+          const listaVistos = visualizadores.join(", ");
+
           div.innerHTML = `
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-              <img src="${st.foto}" style="width:25px; height:25px; border-radius:50%; object-fit:cover;">
-              <strong style="font-size:12px; color:var(--accent);">${st.autor}</strong>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <img src="${st.foto}" style="width:30px; height:30px; border-radius:50%; object-fit:cover;">
+                <strong style="font-size:13px; color:var(--accent);">${st.autor} (${st.chave})</strong>
+              </div>
+              ${st.chave !== perfilUsuario.chave ? `<button class="btn-action" style="padding:4px 8px; font-size:11px; width:auto; margin:0;" onclick="iniciarChatPrivado('${st.autor}', '${st.chave}', '${st.foto}')"><i class="fa-solid fa-reply"></i> Responder</button>` : ''}
             </div>
-            <p style="font-size:13px; color:#fff;">${st.texto}</p>
+            ${st.texto ? `<p style="font-size:13px; color:#fff; margin-top:4px;">${st.texto}</p>` : ''}
+            ${conteudoMidia}
+            <div style="font-size:11px; color:var(--text-sub); margin-top:8px; border-top:1px solid #2a3942; padding-top:4px;">
+              <i class="fa-solid fa-eye"></i> Visto por: ${listaVistos}
+            </div>
           `;
           container.appendChild(div);
         });
